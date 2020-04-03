@@ -12,5 +12,5 @@ steps:
   - name: gcr.io/cloud-builders/gsutil
     args: ['cp','k8s-http-server.yaml','gs://mad-demo-k8s/']
     waitFor: ['render http']
-timeout: 100s
+timeout: 300s
 tags: ['http-server-render']
