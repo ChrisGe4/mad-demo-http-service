@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
         - name: rest
-          image: "gcr.io/cloud-build-delivery-mad/http-server:dev"
+          image: "gcr.io/PROJECT_ID/http-server:ENV"
           imagePullPolicy: Always
           env:
             - name: GRPC_SERVER_HOST

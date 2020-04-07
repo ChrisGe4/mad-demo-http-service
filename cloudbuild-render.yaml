@@ -5,12 +5,17 @@ options:
     - CLOUDSDK_CONTAINER_CLUSTER=cbd-mad-demo
     - ENV=${_ENV}
 steps:
-  - id: 'render http'
+  - id: 'patch-k8s-config'
+    name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args: ['-c','find k8s -type f | xargs sed -i -e "s/PROJECT_ID/$PROJECT_ID/g" -e "s/ENV/${_ENV}/g"']
+  - id: 'render-http-service'
     name: gcr.io/$PROJECT_ID/skaffold:alpha
     args: ['render', '-f=skaffold.yaml', '--output=k8s-http-server.yaml']
-    waitFor: ['-']
-  - name: gcr.io/cloud-builders/gsutil
+    waitFor: ['patch-k8s-config']
+  - id: 'copy-http-service-render'
+    name: gcr.io/cloud-builders/gsutil
     args: ['cp','k8s-http-server.yaml','gs://mad-demo-k8s/']
-    waitFor: ['render http']
+    waitFor: ['render-http-service']
 timeout: 300s
-tags: ['http-server-render']
+tags: ['http-server-render','${_ENV}']
